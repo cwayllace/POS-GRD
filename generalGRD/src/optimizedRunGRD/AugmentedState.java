@@ -47,15 +47,8 @@ public  class AugmentedState{
          
         // Compare the data members and return accordingly 
         if(prevId != c.prevId) return false;
-       // if(observationId != c.observationId) return false;
         for(int i =0; i < goals.length; i++)
 			if(goals[i] != c.goals[i]) return false;
-      /*  if(goalsObs != null) {
-        	if(c.goalsObs == null) return false;
-        	else
-        for(int i =0; i < goalsObs.length; i++)
-			if(goalsObs[i] != c.goalsObs[i]) return false;
-        }else if(c.goalsObs != null) return false;*/
         
         return true;
     }

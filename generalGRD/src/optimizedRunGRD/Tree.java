@@ -19,32 +19,6 @@ public class Tree {
 	 * @param n an array with the path from root to node to add
 	 * @description if only part of the path is present then complete the whole path
 	 */
-	/*public void addNode(int[] n) {
-		Node p = root;
-		Node parent = p;
-		if(p.children == null)
-			for(int i = 0; i < n.length; i++) {
-				Node child = new Node(n[i],p.value);
-				p.addChild(child);
-				p = child;
-			}
-		else
-		for(int i = 0; i < n.length; i++) {
-			
-			if(parent != null) {
-			p = parent;
-			
-			int[] temp = subArray(i+1,n);
-			parent = lookFor(temp,p);
-			}
-			if(parent == null && p!=null) {	//add to p
-				Node child = new Node(n[i],p.value);
-				p.addChild(child);
-				p = child;
-			}
-		}
-
-	}*/
 	
 	public void addNode(int[] n) {
 

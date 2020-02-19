@@ -32,7 +32,6 @@ public class TVI{
 		this.stateGoals = stateGoals;
 		Tarjan tarjan = new Tarjan();
 		List<List<Integer>> scc = tarjan.getSCComponents(makeGraph());
-		//if(verbose) System.out.println("scc " + scc);
 		costAtS0 = runTVI(scc, isMin);
 	}
 	
@@ -71,7 +70,6 @@ public class TVI{
 		copyStates(scc.get(c));
 		iterations++;
 		}while(count < 2);
-		//System.out.println("iterations "+iterations);
 		}
 		if(!transition.isEmpty())
 			return nextValues[0];
@@ -100,7 +98,7 @@ public class TVI{
 		if(nextValues[0] > 1000) return true;
 		for(Integer i: statesInOneScc)
 		{
-			if(nextValues[i] > 1000) //added for stochastic domains version
+			if(nextValues[i] > 1000)
 				continue;
 			if(!(Math.floor(nextValues[i]*100000000000000000.0) == Math.floor(currentValues[i]*100000000000000000.0)))
 				return false;
@@ -143,13 +141,8 @@ public class TVI{
 			if(prob < 1.0)
 				result += (currentValues[state]+cost(state, state))*(1-prob);
 			
-			//if((isMin && value > result) ||(!isMin && value < result))
 			if(value < result)
 				value = result;
-			/*if(isMin && converged && currentValues[state] == result) {
-				legalTransition.put(state, actionStateProb.getKey(), actionStateProb.getValue());
-				
-			}*/
 		}
 		
 		return value;

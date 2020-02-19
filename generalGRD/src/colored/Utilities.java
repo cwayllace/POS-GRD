@@ -87,10 +87,7 @@ public class Utilities {
 		  catch(IOException e) {
 			  System.out.println(e);
 		  }	
-		//System.out.println(result);
-		//for(int i = 0; i<result.size(); i++) {
-			//System.out.println(result.get(i));
-		//}
+
 		return result;
 	}
 
@@ -105,12 +102,9 @@ public class Utilities {
 		
 		for(ArrayList<String> goal : orderBlocks) //per goal
 		{
-			//System.out.println(goal);
 			int size = goal.size();
 			String nextBlock = null;
-			//System.out.println(goal.get(size-1));
 			onTable = lookFor(goal.get(size-1),predicates);
-			//System.out.println(size);
 			if (!onTable.isEmpty())
 			{
 				for(int i =0; i< onTable.size(); i++)
@@ -123,21 +117,17 @@ public class Utilities {
 						{
 							if( nextBlock != null)
 								nextBlock = lookFor(goal.get(j), nextBlock,predicates);
-							else{//System.out.println("no 3-n block");
+							else{
 							break;}
 						}
 					}
 				}
 				if(nextBlock != null)
-				{//System.out.println("goal"+goal);
+				{
 				return goalNumber;}
-				//else
-					//{System.out.println("last one not found");}
 			}
-			//else {System.out.println("none on table");}
 			goalNumber++;
 		}
-		//System.out.println("no goal defined");
 		return -1;
 	}
 
@@ -224,81 +214,7 @@ public class Utilities {
 		return possibleActions;
 	}
 
-	/**
-	 * Find the next possible successors and probabilities after taking action "a" from a state defined by "predicates"
-	 * @param a
-	 * @param predicates
-	 * @return
-	 * @throws CloneNotSupportedException
-	 */
-	/*public static HashMap<State,Double> nextStates(Action a, ArrayList<Predicate> predicates, String domainName, String instanceName) throws CloneNotSupportedException{
-		
-		HashMap<State,Double> stateProbList = new HashMap<State,Double>();
-		
-		//copy all predicates except the ones that are deleted, add the new ones and create new states as successors
-		if(a.getName().equals("pick-up-block-from"))
-		{
-			State s1 = new State(-1, domainName, instanceName);
-			State s2 = new State(-1, domainName, instanceName);
-			for(Predicate p:predicates)
-			{
-				if(!a.getParameters().get(1).equals("table") && p.name.equals("on-top-of")&&p.parameters.containsAll(a.getParameters()))
-				{
-					ArrayList<String> temp = new ArrayList<String>();
-					temp.add(a.getParameters().get(0));
-					temp.add("table");
-					s2.predicates.add(new Predicate("on-top-of", temp));
-				}
-				else s2.predicates.add(p);
-	
-				if(p.name.equals("on-top-of")&&p.parameters.containsAll(a.getParameters()));
-				else s1.predicates.add(p);
-				
-			}
-			s1.predicates.add(new Predicate("holding", a.getParameters().get(0)));
-			Double tempProb = stateProbList.get(s1);
-			if(tempProb != null) stateProbList.put(s1, tempProb + 0.75);
-			else stateProbList.put(s1,0.75);
-			tempProb = stateProbList.get(s2);
-			if(tempProb != null) stateProbList.put(s2, tempProb + 0.25);
-			else stateProbList.put(s2,0.25);
-			//stateProbList.add(new StateProb(s1, 0.75));
-			//stateProbList.add(new StateProb(s2, 0.25));
-		}
-		
-	
-		else if(a.getName().equals("put-down-block-on"))
-		{
-			State s1 = new State(-1, domainName, instanceName);
-			State s2 = new State(-1, domainName, instanceName);
-			for(Predicate p:predicates)
-			{
-				if(p.name.equals("holding")&&p.parameters.get(0).equals(a.getParameters().get(0)))
-				{
-					s1.predicates.add(new Predicate("on-top-of", a.getParameters()));
-					ArrayList<String> temp = new ArrayList<String>();
-					temp.add(a.getParameters().get(0));
-					temp.add("table");
-					s2.predicates.add(new Predicate("on-top-of", temp));
-				}
-				else 
-				{
-					s1.predicates.add(p);
-					s2.predicates.add(p);
-				}
-				 
-				
-			}
-			Double tempProb = stateProbList.put(s1, 0.75);
-			if(tempProb != null) stateProbList.put(s1, tempProb + 0.75);
-			tempProb = stateProbList.put(s2, 0.25);
-			if(tempProb != null) stateProbList.put(s2, tempProb + 0.25);
-			//stateProbList.add(new StateProb(s1, 0.75));
-			//stateProbList.add(new StateProb(s2, 0.25));
-			
-		}
-		return stateProbList;
-	}*/
+
 	
 	/**
 	 * Find the next possible successors and probabilities after taking action "a" from a state defined by "predicates"
@@ -365,11 +281,10 @@ public class Utilities {
 		return stateProbList;
 	}
 
-	//static String dirName = "./src/colored6b2c3g/";
 	/**
 	 * @return all blocks and table used
 	 */
-	public static ArrayList<String> readObjects(String domainName, String instanceName){   //done can just use this part
+	public static ArrayList<String> readObjects(String domainName, String instanceName){   
 		String fileName = "src/" + domainName + "/" + instanceName + "/template.pddl"; 
 		String line ="";
 		ArrayList<String> blocks = new ArrayList<String>();
@@ -396,14 +311,13 @@ public class Utilities {
 			  System.out.println(e);
 		  }
 		blocks.add("table");
-		//System.out.println(blocks);
 		return blocks;
 	}
 	
 	/**
 	 * @return all action names (without parameters)
 	 */
-	public static ArrayList<String> readActions(String domainName, String instanceName){   //done can just use this part
+	public static ArrayList<String> readActions(String domainName, String instanceName){ 
 		String fileName = "src/" + domainName + "/" + instanceName + "/domain.pddl"; 
 		ArrayList<String> actions = new ArrayList<String>();
 		String line ="";
@@ -429,7 +343,6 @@ public class Utilities {
 		  catch(IOException e) {
 			  System.out.println(e);
 		  }		
-		//System.out.print(actions);
 		return actions;
 	}
 	
@@ -506,7 +419,6 @@ public class Utilities {
 				   line = line.substring(1, line.length()-1);
 				   String[]pred = line.split("\\,");
 				   sensor.put(pred[0], pred[1]);
-				   //line = br.readLine();
 			   }
 
 
@@ -518,16 +430,11 @@ public class Utilities {
 		  catch(IOException e) {
 			  System.out.println(e);
 		  }	
-		//System.out.println(sensor);
 		return sensor;
 	}
 	
 	public static void main(String[] args) {
-		//readGoals();
-	//	readObjects();
-		//readInitState();
-	//	readActions();
-	
+
 		
 	}
 
@@ -595,11 +502,9 @@ public class Utilities {
 			for(String index : p.parameters)
 				pred += index +" ";
 			pred = pred.trim();
-			//System.out.println(pred);
 			if(keys.contains(pred)) {
 				Predicate newPredicate = createPredicateFrom(obs.get(pred));
 				
-			//	System.out.println("true");
 				if(!p.equals(newPredicate)) {
 					tempState.predicates.remove(p);
 					if(tempState.predicates.indexOf(newPredicate) == -1)	//do not duplicate predicates

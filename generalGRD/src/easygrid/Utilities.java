@@ -71,7 +71,6 @@ public class Utilities {
 				   ArrayList<String> goal = new ArrayList<String>();
 				   goal.add(line);
 				   result.add(goal);
-				   //System.out.println(line);
 			   }
 
 
@@ -83,7 +82,6 @@ public class Utilities {
 		  catch(IOException e) {
 			  System.out.println(e);
 		  }	
-		//System.out.println(result);
 		return result;
 	}
 
@@ -107,7 +105,6 @@ public class Utilities {
 			}
 			goalNumber++;
 		}
-		//System.out.println("no goal defined");
 		return -1;
 	}
 
@@ -131,12 +128,7 @@ public class Utilities {
 							if(!src.equals(dst))
 							
 							{
-							/*	for(Predicate p: predicates)
-								{
-									if(p.name.equals("connected")&& p.value&&p.parameters.contains(src)&&p.parameters.contains(dst)) flag1 = true;
-									if(p.name.equals("at")&& p.value&&p.parameters.contains(src)) flag2 = true;
-										
-								}*/
+
 								///
 								if(pred.isEmpty()) {	//store all predicates that never change
 		                        	for (int p = 0; p < predicates.size(); p++) {
@@ -176,81 +168,7 @@ public class Utilities {
 		return possibleActions;
 	}
 
-	/**
-	 * Find the next possible successors and probabilities after taking action "a" from a state defined by "predicates"
-	 * @param a
-	 * @param predicates
-	 * @return
-	 * @throws CloneNotSupportedException
-	 */
-	/*public static HashMap<State,Double> nextStates(Action a, ArrayList<Predicate> predicates, String domainName, String instanceName) throws CloneNotSupportedException{
-		
-		HashMap<State,Double> stateProbList = new HashMap<State,Double>();
-		
-		//copy all predicates except the ones that are deleted, add the new ones and create new states as successors
-		if(a.getName().equals("pick-up-block-from"))
-		{
-			State s1 = new State(-1, domainName, instanceName);
-			State s2 = new State(-1, domainName, instanceName);
-			for(Predicate p:predicates)
-			{
-				if(!a.getParameters().get(1).equals("table") && p.name.equals("on-top-of")&&p.parameters.containsAll(a.getParameters()))
-				{
-					ArrayList<String> temp = new ArrayList<String>();
-					temp.add(a.getParameters().get(0));
-					temp.add("table");
-					s2.predicates.add(new Predicate("on-top-of", temp));
-				}
-				else s2.predicates.add(p);
-	
-				if(p.name.equals("on-top-of")&&p.parameters.containsAll(a.getParameters()));
-				else s1.predicates.add(p);
-				
-			}
-			s1.predicates.add(new Predicate("holding", a.getParameters().get(0)));
-			Double tempProb = stateProbList.get(s1);
-			if(tempProb != null) stateProbList.put(s1, tempProb + 0.75);
-			else stateProbList.put(s1,0.75);
-			tempProb = stateProbList.get(s2);
-			if(tempProb != null) stateProbList.put(s2, tempProb + 0.25);
-			else stateProbList.put(s2,0.25);
-			//stateProbList.add(new StateProb(s1, 0.75));
-			//stateProbList.add(new StateProb(s2, 0.25));
-		}
-		
-	
-		else if(a.getName().equals("put-down-block-on"))
-		{
-			State s1 = new State(-1, domainName, instanceName);
-			State s2 = new State(-1, domainName, instanceName);
-			for(Predicate p:predicates)
-			{
-				if(p.name.equals("holding")&&p.parameters.get(0).equals(a.getParameters().get(0)))
-				{
-					s1.predicates.add(new Predicate("on-top-of", a.getParameters()));
-					ArrayList<String> temp = new ArrayList<String>();
-					temp.add(a.getParameters().get(0));
-					temp.add("table");
-					s2.predicates.add(new Predicate("on-top-of", temp));
-				}
-				else 
-				{
-					s1.predicates.add(p);
-					s2.predicates.add(p);
-				}
-				 
-				
-			}
-			Double tempProb = stateProbList.put(s1, 0.75);
-			if(tempProb != null) stateProbList.put(s1, tempProb + 0.75);
-			tempProb = stateProbList.put(s2, 0.25);
-			if(tempProb != null) stateProbList.put(s2, tempProb + 0.25);
-			//stateProbList.add(new StateProb(s1, 0.75));
-			//stateProbList.add(new StateProb(s2, 0.25));
-			
-		}
-		return stateProbList;
-	}*/
+
 	
 	/**
 	 * Find the next possible successors and probabilities after taking action "a" from a state defined by "predicates"
@@ -392,29 +310,7 @@ public class Utilities {
 		return sensor;
 	}
 	
-	/*public static int[] getIdOf(String state, String observation, ArrayList<State> allStates) {
-		int[] stateObs = new int[2];
-		boolean sFlag = false, oFlag = false;
-		int count = 0; //if 2 return, counts the findings of state and obs ids
-		for(State s:allStates)
-		{	
-			String wordState[] = state.split("\\s");
-			String wordObs[] = observation.split("\\s");
-			if(!sFlag && s.predicates.contains(new Predicate(wordState[0],wordState[1]))) {
-				stateObs[0] = s.id;
-				sFlag = true;
-				count++;
-				if(count == 2) return stateObs;
-			}
-			if(!oFlag && s.predicates.contains(new Predicate(wordObs[0],wordObs[1]))) {
-				stateObs[1] = s.id;
-				oFlag = true;
-				count++;
-				if(count == 2) return stateObs;
-			}
-		}
-		return null;
-	}*/
+
 	
 	public static void getIds(ArrayList<Integer> observations, Map<String, String> obs, ArrayList<State> allStates) {
 		
@@ -444,14 +340,7 @@ public class Utilities {
 		
 	}
 	
-	public static void main(String[] args) {
-		//readGoals();
-	//	readObjects();
-		//readInitState();
-	//	readActions();
-	
-		
-	}
+
 
 	
 

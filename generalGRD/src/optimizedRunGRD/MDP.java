@@ -90,7 +90,6 @@ public class MDP {
 					//add same current state
 					assignTotalProbabilityToState(tmpSuccProb, s.id, 1.0-totalProb);
 				}
-				//tmpActionMapStProb.put(ac, tmpSuccProb);
 				ac.addSuccessors(tmpSuccProb);
 				tmpActionMapStProb.add(ac);
 			
@@ -98,10 +97,8 @@ public class MDP {
 			transitionMap.put(s.id, tmpActionMapStProb);
 		}
 		if(po) fillObservations(domainName, instanceName);
-		//can analyze allStates?
 	}
 	
-	//TODO add more domains
 	private void fillObservations(String domainName, String instanceName) {
 		Map<String, String> obs = null;
 		if(domainName.contains("room")) {

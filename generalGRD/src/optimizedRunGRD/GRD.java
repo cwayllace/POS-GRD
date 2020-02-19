@@ -42,7 +42,6 @@ public class GRD {
         				+"\n-sr: Sensor Refinement Optimized? \n-ar: Action Removal \n-k: budget \n");
         }
         else {
-        		//System.out.println("Success!");
     			/*
     			 * Read PPDDL
     			 * Create MDP(flags, values) -> transitionFunction with all actions
@@ -59,7 +58,6 @@ public class GRD {
 
         		HashMap<Integer,Action> distinctive;
         		Transition legalTransition = findLegalPolicies(mdp.getTransition(), mdp.getGoals(), flags, values, true);
-        		//System.out.println(legalTransition);
         		if(!flags[2] && !flags[1]) { //if agent is optimal and FO remove all reachable actions with < 2 goals
         			distinctive = removeDistinctiveActions(mdp.getGoals().size(), legalTransition);
         		AugmentedState s0 = createAugS0(mdp.getGoals().size());
@@ -76,7 +74,6 @@ public class GRD {
         		if(flags[7]) System.out.println("Time to compute wcd0: " + (System.nanoTime() - start)*0.000000001 + "s.");
         		 if(wcd0 == 0) return;
         		restoreLegalTransition(legalTransition, distinctive);
-        		//System.out.println("Legal transition: "+ legalTransition.toString());
         		//0: domainName 1: instanceName 2: algName 3: kValue 4: timeOut 5: MBestPolicies
         		//0: Deterministic? 1: Partial Observability? 2: Sub-optimal? 3: AR 4: SR 5: SR Optimal? 6: Design Pruning? 7: verbose
         		Design design = new Design(Integer.parseInt(values[3]), legalTransition, costPerGoal, mdp.getGoals(), convergerValuesForAllGoals, wcd0, flags, values, null, null, null, start);
@@ -91,9 +88,6 @@ public class GRD {
         		if(flags[6]) toPrune = new ArrayList<Integer>();
         		Transition augTransition = createAugmentedStateSpace(legalTransition, s0, flags, values, allAugmentedStates, 
             				mdp.getObservations(), observed, totalPossiblegoals,toPrune, false);
-        		
-        		//System.out.println("Legal before design "+ legalTransition);
-        		//System.out.println("Augmented "+ augTransition);
         		
         		GR gr = new GR(augTransition);
         		double wcd0 = gr.computeWCD(flags, values, gr.getAbsorvingStates(), false);
@@ -118,27 +112,6 @@ public class GRD {
 		System.out.println("Total: "+total*0.000000001/60+" min.");
         }
 	}
-	
-	/*private static ArrayList<ArrayList<Integer>> createObservedMap(ArrayList<Integer> observations) {
-		ArrayList<ArrayList<Integer>>observed =  new ArrayList<ArrayList<Integer>>();
-		for(int i = 0; i < observations.size(); i++) {
-			int obs = observations.get(i);
-			while(observed.size() < obs) observed.add(null);
-			if(observed.size() == obs) {
-				ArrayList<Integer> temp = new ArrayList<Integer>();
-				temp.add(i);
-				observed.add(obs, temp);
-			}else if(observed.size() > obs) {
-				ArrayList<Integer> temp = observed.get(obs);
-				if(temp == null) {
-					temp = new ArrayList<Integer>();
-					observed.add(temp);
-				}
-				temp.add(i);
-			}
-		}
-		return observed;
-	}*/
 	
 	private static HashMap<Integer, ArrayList<Integer>> createObservedMap(ArrayList<Integer> observations) {
 		HashMap<Integer, ArrayList<Integer>>observed =  new HashMap<Integer, ArrayList<Integer>>();
@@ -234,18 +207,12 @@ public class GRD {
 			
 			//modify augTransition to remove nonobservable states
 			Transition temAugTRansition = augTransition;
-			//checkProbabilities(augTransition);
-			//System.out.println("first augmentation "+ augTransition);
-			if(isDesign) {
-					
-			}
 			
 			augTransition = new Transition();
 			ArrayList<Integer> newObservations = updateObservations(observations, tempAugmentedStates);
 			
 			////
 			allAugmentedStates = augmentPOStates(partObs, temAugTRansition, augTransition, s, newObservations, totalPossiblegoals);
-			//allAugmentedStates.addAll(augmentPOStates(partObs, temAugTRansition, augTransition, s, newObservations, totalPossiblegoals));
 			if(allAugmentedStates.size() != augTransition.size()) {
 				int diff = allAugmentedStates.size() - augTransition.size();
 				while(diff > 0) {
@@ -253,27 +220,19 @@ public class GRD {
 					diff--;
 				}
 			}
-			//checkProbabilities(augTransition);
 			//for pruning in SR: add set of FO goals to allAugmentedStates, relate allAugmentedStates to original id
 			if(flags[6] && !isDesign) {
-			//if(!isDesign) {
-				//System.out.println("aqui los metodos para pruning");
-				//ArrayList<Integer> toPrune = new ArrayList<Integer>();
 				ArrayList<Integer> toKeep = new ArrayList<Integer>();
 				findStatesWithDifferentObservedGoals(tempAugmentedStates, allAugmentedStates, toPrune, toKeep);
 				///
 				HashSet<Integer> toCheck= new HashSet<Integer>();
 				do {
-//					toCheck = new HashSet<Integer>();
 					findSuccessors(augTransition, toPrune, toKeep, toCheck, true);	//check successors
 					findSuccessors(augTransition, toKeep, toPrune, toCheck, false);	//check predecessors
 				}while(!toPrune.isEmpty() && !toCheck.isEmpty());
 				if(flags[7]) System.out.println("Pruned states "+toPrune.size()+" from a total of "+(toKeep.size()+toPrune.size()));
 				///
-//				findSuccessors(augTransition, toPrune, toKeep, true);	//check successors
-//				findSuccessors(augTransition, toKeep, toPrune, false);	//check predecessors
 				
-				//System.out.println(augTransition);
 			}
 			return augTransition;
 		}else {
@@ -283,34 +242,7 @@ public class GRD {
 	}
 	
 
-	
-/*private static void findSuccessors(Transition augTransition, ArrayList<Integer> from,
-			ArrayList<Integer> possibleSuccessors, boolean toPruneFirst) {
-	HashSet<Integer> toMove = new HashSet<Integer>();
-	for(int s: from) {
-		ArrayList<Action> actions = augTransition.getMap().get(s);
-		if(actions != null) {
-			for(Action a:actions) {
-				for(StateIDProb succ:a.getSuccessors()) {
-					if(possibleSuccessors.contains(succ.getState())) 
-						toMove.add(succ.getState());
-				}
-			}
-		}
-	}
-	
-	if(toPruneFirst) {
-		possibleSuccessors.addAll(toMove);
-		from.removeAll(toMove);
-	}else {
-		possibleSuccessors.removeAll(toMove);
-		from.addAll(toMove);
-	}
-	//System.out.println("moved " + toMove.size());
-	
-		
-	}
-*/
+
 
 private static boolean findSuccessors(Transition augTransition, ArrayList<Integer> from,
 		ArrayList<Integer> possibleSuccessors, HashSet<Integer> toCheck, boolean toPruneFirst) {
@@ -332,7 +264,6 @@ for(int s: newToPrune) {
 		for(Action a:actions) {
 			for(StateIDProb succ:a.getSuccessors()) {
 				if(newToKeep.contains(succ.getState())) 
-//				if(possibleSuccessors.contains(succ.getState())) 
 					toMove.add(succ.getState());
 			}
 		}
@@ -340,7 +271,6 @@ for(int s: newToPrune) {
 }
 boolean added = false, removed = false;
 if(toPruneFirst) {
-//	possibleSuccessors.addAll(toMove);
 	added = addAllWithoutDuplicates(possibleSuccessors, toMove);
 	removed = from.removeAll(toMove);
 	if(added || removed) toCheck.addAll(toMove);
@@ -348,9 +278,7 @@ if(toPruneFirst) {
 	removed = possibleSuccessors.removeAll(toMove);
 	added = addAllWithoutDuplicates(from, toMove);
 	if(removed || added) toCheck.addAll(toMove);
-//	from.addAll(toMove);
 }
-//System.out.println("moved " + toMove.size());
 
 return(!toCheck.isEmpty());
 }
@@ -379,7 +307,6 @@ private static void findStatesWithDifferentObservedGoals(ArrayList<AugmentedStat
 			
 			originalOf.add(s, o.prevId);
 		}
-		//System.out.println(toKeep.size() +"to keep "+toPrune.size()+"to prune");
 		HashSet<Integer> toMove = new HashSet<Integer>();
 		for(Integer p: toPrune) {
 			Integer original = originalOf.get(p);
@@ -390,48 +317,9 @@ private static void findStatesWithDifferentObservedGoals(ArrayList<AugmentedStat
 		}
 		toKeep.addAll(toMove);
 		toPrune.removeAll(toMove);
-		//System.out.println("moved " + toMove.size());
 	}
 
-/*	private static void reduceStateSpace(ArrayList<Integer> observations, Transition augTransition,
-			ArrayList<AugmentedState> tempAugmentedStates) {
-		// have a reduced transition by removing augstates with same observation and same actions, make goals = union
-		//group augstates by prevId
-		int size = observations.size();
-		HashMap<Integer, HashSet<Integer>> prevAugmented = new HashMap<Integer,  HashSet<Integer>>(size);
-		for(AugmentedState s: tempAugmentedStates) {
-			prevAugmented.computeIfAbsent(s.prevId, k->new HashSet<Integer>()).add(s.id);
-		}
-		//if they have same prev id they save same observation
-		for(HashSet<Integer> states:prevAugmented.values()) {
-			Object[] s = states.toArray();
-			for(int i = 0; i < s.length - 1; i++) {//for each id of augmented state
-				ArrayList<Integer> statesToMerge = new ArrayList<Integer>();
-				for(int j = i+1; j < s.length; j++) {
-					AugmentedState s1 = tempAugmentedStates.get((Integer) s[i]);
-					AugmentedState s2 = tempAugmentedStates.get((Integer) s[j]);
-					//compare actions
-					ArrayList<Action> aList1 = augTransition.getMap().get((Integer) s[i]);
-					ArrayList<Action> aList2 = augTransition.getMap().get((Integer) s[j]);
-					boolean flag = false;
-					for(int a = 0; a < aList1.size(); a++) {
-						if(aList2.contains(aList1.get(a))) {
-							flag = false;
-							break;
-						}
-						flag = true;						
-					}
-					if(flag) {
-						if(statesToMerge.indexOf(s1.id) == -1)
-							statesToMerge.add(s1.id);
-						if(statesToMerge.indexOf(s2.id) == -1)
-							statesToMerge.add(s2.id);
-					}
-				}				
-			}
-		}
-		
-	}*/
+
 
 	/**
 	 * @param tempAugmentedStates
@@ -452,41 +340,7 @@ private static void findStatesWithDifferentObservedGoals(ArrayList<AugmentedStat
 	 * @return observation list where id is the id of the 1st round augmented state and the value
 	 * is the corresponding 1st round augmented observation
 	 */
-	/*private static ArrayList<Integer> updateObservations(ArrayList<Integer> observations,
-			ArrayList<AugmentedState> tempAugmentedStates) {
-		int size = tempAugmentedStates.size();
-		HashMap<Integer, Integer>prevNewAugStates = getPrevNewAugmentedStates(tempAugmentedStates, observations.size());
-		ArrayList<Integer> result = new ArrayList<Integer>(size);
-		int totanNumOfGoals = tempAugmentedStates.get(0).goals.length;
-		HashMap<Integer[], ArrayList<Integer>> t2s = null;	//t2,list of s
-		//at most observations.size() - prevNewAugStates.size() are missing
-		for(int s = 0; s < size; s++) {
-			int t1 = tempAugmentedStates.get(s).prevId;
-			int t2 = observations.get(t1);
-			Integer t3 = prevNewAugStates.get(t2);
-			result.add(s, t3);
-			////
-			if(t3 == null) {
-				t3 = prevNewAugStates.get(t1); //s?
-				t2s = storeMissingValues(s, t1, t2, t2s, t3);
-			}
-			////					
-		}//here change the observation for all null values
-		if(t2s != null) {
-			for(Entry<Integer[], ArrayList<Integer>> entry: t2s.entrySet()) {
-				if(entry.getKey()[1] == -1) {//create a fake augmented state
-					AugmentedState s = new AugmentedState(size, entry.getKey()[0], new boolean[totanNumOfGoals]);
-					entry.getKey()[1] = size;
-					tempAugmentedStates.add(s); 	//add it to keep the size correct CHECK IF IT AFFECTS OTHER PARTS!!
-				}
-				for(Integer s: entry.getValue()) {
-					result.set(s, entry.getKey()[1]);
-				}
-			}
-		}
-		
-		return result;
-	}*/
+
 	
 	private static ArrayList<Integer> updateObservations(ArrayList<Integer> observations,
 			ArrayList<AugmentedState> tempAugmentedStates) {
@@ -497,60 +351,14 @@ private static void findStatesWithDifferentObservedGoals(ArrayList<AugmentedStat
 		for(int s = 0; s < size; s++) {
 			int t1 = tempAugmentedStates.get(s).prevId;
 			int t2 = observations.get(t1);
-			//Integer t3 = prevNewAugStates.get(t2);
 			result.add(s, t2);
-			////
-			/*if(t2 == null) {
-				t2 = prevNewAugStates.get(t1); //s?
-				t2s = storeMissingValues(s, t1, t2, t2s);
-			}*/
-			////					
-		}//here change the observation for all null values
-		/*if(t2s != null) {
-			for(Entry<Integer[], ArrayList<Integer>> entry: t2s.entrySet()) {
-				if(entry.getKey()[1] == -1) {//create a fake augmented state
-					AugmentedState s = new AugmentedState(size, entry.getKey()[0], new boolean[totanNumOfGoals]);
-					entry.getKey()[1] = size;
-					tempAugmentedStates.add(s); 	//add it to keep the size correct CHECK IF IT AFFECTS OTHER PARTS!!
-				}
-				for(Integer s: entry.getValue()) {
-					result.set(s, entry.getKey()[1]);
-				}
-			}
-		}*/
+				
+		}
 		
 		return result;
 	}
 
-	/**
-	 * @param s augmented state id
-	 * @param t1 augmented state previd
-	 * @param t2 original observation of t1
-	 * @param t2s map storing information, can be null
-	 * @param t3 id of the augmented state that corresponds to the observation of s
-	 * @return
-	 */
-	/*private static HashMap<Integer[], ArrayList<Integer>> storeMissingValues(int s, int t1, int t2, HashMap<Integer[], ArrayList<Integer>> t2s, Integer t3) {
-		Integer[] t2t3;
-		if(t2s == null) {
-			t2s = new HashMap<Integer[], ArrayList<Integer>>(5); //5 is a arbitrary number
-			t2t3 = new Integer[2];
-			t2t3[0] = t2;
-			t2t3[1] = -1;
-			if(t3 != null) t2t3[1] = t3;
-			t2s.computeIfAbsent(t2t3, k-> new ArrayList<Integer>()).add(s);
-		}else {	
-			//check if t3 was found
-			for(Entry<Integer[], ArrayList<Integer>> entry:t2s.entrySet()) {
-				t2t3 =entry.getKey();
-				if(t2t3[0] == t2 && t2t3[1] == -1) {
-					if(t3 != null) t2t3[1] = t3;
-				}
-				entry.getValue().add(s);
-			}
-		}
-		return t2s;
-	}*/
+	
 
 
 	/**
@@ -578,7 +386,6 @@ private static void findStatesWithDifferentObservedGoals(ArrayList<AugmentedStat
 		augTransition.put(s.id, new ArrayList<Action>());
 		
 		set.add(s);
-		//int tempId = set.size();
 		while (!stack.isEmpty()) {
 			
 			
@@ -596,22 +403,16 @@ private static void findStatesWithDifferentObservedGoals(ArrayList<AugmentedStat
 				int nGoals;
 				for(StateIDProb stateProb:a.getSuccessors()) {
 					AugmentedState newState;
-				//	if(!partObs)
-						newState = new AugmentedState(set.size(), stateProb.getState(), S);
-				//	else newState = new AugmentedState(tempId, stateProb.getState(), S);
+					newState = new AugmentedState(set.size(), stateProb.getState(), S);
 					nGoals = newState.countGoals();
 					int positionState = set.indexOf(newState);
 					if(positionState==-1)
 					{
 						if(nGoals >= possibleGoalsAllowed){//add (states,prob) for this action a
 							stProbMap.add(new StateIDProb(newState.id, stateProb.getProb()));
-						//	if(!partObs) {
-								stack.push(newState);
-								set.add(newState);
-						/*	} else {
-								toPush.add(newState);
-								tempId++;
-							}*/
+							stack.push(newState);
+							set.add(newState);
+
 						}else {
 							break; //none of the successors will have more than possibleGoalsAllowed goals in common
 						}
@@ -627,20 +428,6 @@ private static void findStatesWithDifferentObservedGoals(ArrayList<AugmentedStat
 				}
 			}
 			
-			/*if(partObs) {
-				//check if there exist other state with same actions
-				AugmentedState existent = checkStateWithSameActions(state, actStProbMap, set, augTransition);
-				if(existent == null) {
-					for(AugmentedState pushed:toPush) {
-						stack.push(pushed);
-						set.add(pushed);
-					}
-					tempId = set.size();
-					augTransition.getMap().get(state.id).addAll(actStProbMap);
-				}else {
-					state = existent;
-				}
-			}else*/
 				augTransition.getMap().get(state.id).addAll(actStProbMap);//need to deep copy actions specially successors
 			}else augTransition.put(state.id, null);
 		}
@@ -655,15 +442,6 @@ private static void findStatesWithDifferentObservedGoals(ArrayList<AugmentedStat
 	 * @param augTran
 	 * @return augmented state that can replace state
 	 */
-/*	private static AugmentedState checkStateWithSameActions(AugmentedState state, ArrayList<Action> actStProbMap,
-			ArrayList<AugmentedState> set, Transition augTran) {
-		for(AugmentedState stored:set) {
-			if(isSamePO(stored, state.prevId, actStProbMap, augTran))
-				return stored;
-		}
-		return null;
-	}*/
-	
 	private static AugmentedState checkStateWithSameActions(AugmentedState state, ArrayList<Action> actStProbMap,
 			ArrayList<AugmentedState> set, Transition augTran) {
 		ArrayList<Action> actions;
@@ -728,11 +506,9 @@ private static void findStatesWithDifferentObservedGoals(ArrayList<AugmentedStat
 		counter++;
 		stack.push(temp);
 		structure.computeIfAbsent(temp.getObserved(), k-> new ArrayList<AugObservation>()).add(temp);
-		//set = o.getAugStates();
 		while (!stack.isEmpty()) {
 			
 			AugObservation obs = stack.pop();
-			//set = obs.getAugStates();
 			for(Entry<Integer, HashSet<AugmentedState>> entry: obs.getNextAStarting().entrySet()) {
 				int observationId = entry.getKey(); //observed
 				startingAStates = entry.getValue();
@@ -749,8 +525,8 @@ private static void findStatesWithDifferentObservedGoals(ArrayList<AugmentedStat
 					for(AugObservation storedObs: stored) {
 						if(hasSameGoals(temp.getGoals(), storedObs.getGoals())) {
 							
-							boolean diffNextAStart = storedObs.merge(temp); //***check nextStarting first, if they are different change obsId to the observed but put it to stack
-							isthere = true;	//***temp should have same id as stored and all states as well
+							boolean diffNextAStart = storedObs.merge(temp); 
+							isthere = true;
 							if(diffNextAStart && temp.getNumGoals() >= 2) 
 								stack.push(temp);
 							break;
@@ -767,7 +543,6 @@ private static void findStatesWithDifferentObservedGoals(ArrayList<AugmentedStat
 			}
 			
 		}
-		//System.out.println(set);
 		return set;
 	}
 	
@@ -992,10 +767,7 @@ private static void findStatesWithDifferentObservedGoals(ArrayList<AugmentedStat
 			}else{//sub-optimal
 				
 			}
-		}/*if(!isSubOptimal && !partObs) { //if agent is optimal and FO remove all reachable actions with < 2 goals
-			removeDistinctiveActions(numberOfGoals, currentTransition);
-			
-		}*/
+		}
 		return currentTransition;
 	}
 	
@@ -1018,7 +790,6 @@ private static void findStatesWithDifferentObservedGoals(ArrayList<AugmentedStat
 			for(Action a:actions) {
 				if(a.countGoals() < 2) {
 					toRemove.put(s, a);
-					//.set(index, null);
 				}
 			}
 		}
@@ -1054,9 +825,6 @@ private static void findStatesWithDifferentObservedGoals(ArrayList<AugmentedStat
 						a.setGoal(idTempGoal, true, toalGoals);
 					}
 				} else if(current != null && temp != null){
-					//current = currentTransition.getMap().get(s);
-					//temp = tempTransition.getMap().get(s);
-					//if(temp != null)
 					for(Action a: temp) {
 						if(setGoals)
 						a.setGoal(idTempGoal, true, toalGoals);
@@ -1083,9 +851,6 @@ private static void findStatesWithDifferentObservedGoals(ArrayList<AugmentedStat
 		
 		findReachableStates(0,reachableStates, currentTransition);
 		currentTransition.removeAllNonReachableStates(reachableStates);
-		//nonReachableStates.removeAll(reachableStates);
-		//currentTransition.getMap().keySet().removeAll(nonReachableStates);
-		//System.out.println(currentTransition);
 	}
 
 	private static HashSet<Integer> copyStatesFrom(Set<Integer> setStates) {
@@ -1131,15 +896,12 @@ private static void findStatesWithDifferentObservedGoals(ArrayList<AugmentedStat
 				for(StateIDProb stateProb: actionStateProb.getSuccessors()) {
 					sp.add(new StateIDProb(stateProb.getState(), stateProb.getProb()));
 				}
-				//Action a = actionStateProb.getKey();
 				if(setGoals)
 				actionStateProb.setGoal(idTempGoal, true, totalGoals);
-				//actionStateProb.addSuccessors(sp);
 				asp.add(actionStateProb);
 			}
 			copied.getMap().add(s, asp);
 			}else copied.getMap().add(s, null);
-			//copied.put(stateActionStateProb.getKey(), asp);
 		}
 		return copied;
 	}

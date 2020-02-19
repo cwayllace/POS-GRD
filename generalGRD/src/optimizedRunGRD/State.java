@@ -90,8 +90,6 @@ public class State implements Cloneable{
 		if(domainName.equals("colored")) {
 			possibleActions = colored.Utilities.getPossibleActions(predicates,domainName, instanceName);
 		}else if(domainName.equals("room")){
-			//HashMap<String, ArrayList<StateProb>> nextStateMap = room.Utilities.readNextState(domainName, instanceName);
-			//possibleActions = room.Utilities.getPossibleActions(predicates,nextStateMap);
 			possibleActions = room.Utilities.getPossibleActions(predicates);
 		}else if(domainName.equals("security")){
 			possibleActions = security.Utilities.getPossibleActions(predicates, domainName, instanceName);
@@ -113,7 +111,6 @@ public class State implements Cloneable{
 		if(domainName.equals("colored")) {
 			return colored.Utilities.nextStates(a, predicates,domainName, instanceName);
 		}else if(domainName.equals("room")){
-			//HashMap<String, ArrayList<StateProb>> nextStateMap = room.Utilities.readNextState(domainName, instanceName);
 			return room.Utilities.nextStates(a);
 		}else if(domainName.equals("security")){
 			return security.Utilities.nextStates(a, predicates, domainName, instanceName);

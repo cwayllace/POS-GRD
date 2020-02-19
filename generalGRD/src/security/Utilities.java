@@ -11,9 +11,7 @@ import optimizedRunGRD.Predicate;
 import optimizedRunGRD.State;
 import optimizedRunGRD.StateProb;
 
-//readInitState isGoal getPossibleActions nextStates
 public class Utilities {
-	//static String dirName = "/Users/Amelie/Desktop/Summer Research 2018/AttackerWorld/attackerxhyg/";
 	static ArrayList<Predicate> pred = new ArrayList<Predicate>();
 	
     /**
@@ -45,7 +43,6 @@ public class Utilities {
 		catch (IOException e) {
 		    System.out.println(e);
 		}
-        //System.out.println(predicates);
 		return predicates;
 	}
 
@@ -87,7 +84,6 @@ public class Utilities {
                     if (check) {
                         effect.add(combine[i]);
                     }
-                    //precondition.add(combine[i]);
                 }
 
                 State s1 = new State(-1, domainName, instanceName);
@@ -135,7 +131,6 @@ public class Utilities {
         catch (IOException e) {
             System.out.println(e);
         }
-        //System.out.println(actions);
         return actions;
     }
 	
@@ -146,7 +141,6 @@ public class Utilities {
         ArrayList<Action> possibleActions = new ArrayList<Action>();  //key = action name; value = parameter
         String fileName = "src/" + domainName + "/" + instanceName + "/domain.pddl";
         String line = "";
-     //   HashMap<String, HashMap<State, Double>> actions = new HashMap<String, HashMap<State, Double>>();
         String action;
 
         try {
@@ -154,7 +148,6 @@ public class Utilities {
             BufferedReader br = new BufferedReader(fr);
             while (!(line = br.readLine()).contains("action"));
             while (line.contains("action")) {
- //               HashMap<State, Double> listNextStates = new HashMap<State, Double>();
                 line = line.trim();
                 action = line.substring(9);  //name of the action
                 br.readLine();  //parameters line
@@ -273,7 +266,6 @@ public class Utilities {
         catch (IOException e) {
             System.out.println(e);
         }
-        //System.out.println(possibleActions);
         return possibleActions;
     }
 
@@ -303,7 +295,6 @@ public class Utilities {
 		catch (IOException e) {
 		    System.out.println(e);
 		}
-		//System.out.println(result);
 		return result;
 	}
 
@@ -319,13 +310,11 @@ public class Utilities {
             Predicate pred = new Predicate(goal[0].substring(1), goal[1].substring(0, goal[1].length()-1));
             for (Predicate p : predicates) {
                 if (pred.equals(p)) {
-                    //System.out.println(goalNumber);
                     return goalNumber;
                 }
             }
             goalNumber++;
         }
-        //System.out.println(-1);
         return -1;
     }
 
@@ -367,36 +356,7 @@ public class Utilities {
         return stateProbList;
     }
 
-    /**
-	 * @return actionName->position in sorted map
-	 */
-	/*private static HashMap<String,Integer> getActions(String dirName){
-		HashMap<String,Integer> actions = new HashMap<String,Integer>();
-		String fileName = dirName + "/domain.pddl";
-		String line = "";
-        String action;
-        int position = 0;
-
-        try {
-            FileReader fr = new FileReader(fileName);
-            BufferedReader br = new BufferedReader(fr);
-            while (!(line = br.readLine()).contains("action"));
-            while (line.contains("action")) {
-                line = line.trim();
-                action = line.substring(9);  //name of the action
-                if(actions.put(action, position) == null) position++; //if new action is added increment position
-
-            }
-            br.close();
-        }
-        catch (FileNotFoundException fN) {
-            fN.printStackTrace();
-        }
-        catch (IOException e) {
-            System.out.println(e);
-        }
-		return actions;
-	}*/
+  
 
 	public static Map<String,String> readObservation(String domainName, String instanceName){
 		Map<String, String> sensor = new HashMap<String, String>();
@@ -425,16 +385,6 @@ public class Utilities {
 		return sensor;
 	}
 	
-	public static void main(String[] args) {
-	    //State s = new State(-1);
-	    //s.initState();
-	    //readInitState();
-	    //readNextState();
-        //readPossibleActions(s.predicates);
-        //readGoals();
-        //isGoal(s.predicates);
-        //nextStates(a, predicates);
-	}
 
 
 

@@ -8,8 +8,6 @@ import java.util.Stack;
 public class AugObservation {
 	private boolean[] goals;
 	private Transition augTransition;
-	//private ArrayList<Integer>observations;	//id is the original state
-	//private HashSet<AugmentedState> augStates;
 	private ArrayList<AugmentedState> augStates;
 	HashSet<AugmentedState> connectedStates;
 	private int numGoals;	//number of possible goals
@@ -24,45 +22,6 @@ public class AugObservation {
 	private HashSet<AugmentedState> startingAStates;
 	private HashSet<Integer> otherObsIds;
 	
-//	public AugObservation(int tempId, int _observed, HashSet<AugmentedState> _startingAStates, Transition _augTransition,
-//			Transition originalTransition, ArrayList<Integer>observations, int totalNumOfGoals, ArrayList<AugmentedState> set) {
-//		connectedStates = new HashSet<AugmentedState>(); //to verify all states here have observationid == id
-//		observed = -1;
-//		id = -1;
-//		numGoals = 0;
-//		nextAStarting = new HashMap<Integer,HashSet<AugmentedState>>();
-//		augTransition = _augTransition;
-//		startingAStates = _startingAStates;
-//		goals = findGoals(startingAStates, totalNumOfGoals);
-//		augStates = set;
-//		otherObsIds = new HashSet<Integer>(2); //expect not many other ids
-//		Stack<AugmentedState> stack = new Stack<AugmentedState>();
-//		
-//		for(AugmentedState start: startingAStates) {
-//			if(observed == -1)
-//				observed = _observed;
-//			HashSet<AugmentedState> connStates = findAllConnectedStates(start, originalTransition, observations);
-//			if(connStates != null)
-//				connectedStates.addAll(connStates);
-//			else {	//start was already explored and is part of another augObs
-//				if(id == -1 || id == start.observationId) id = start.observationId;
-//				else otherObsIds.add(start.observationId);
-//			}
-//			
-//		}
-//		if(id == -1) id = tempId;	//if no id was suggested when finding all connected states, then use the new one
-//		checkObservationIds();
-//		//transition should be correct and augStates as well
-//		//necesito connectedStates?? para despues? creo que no
-//	}
-//	
-//	public HashSet<Integer> getOtherObsIds() {
-//		return otherObsIds;
-//	}
-//
-//	public HashSet<AugmentedState> getConnectedStates() {
-//		return connectedStates;
-//	}
 
 	
 	public AugObservation(int tempId, int _observed, HashSet<AugmentedState> _startingAStates, Transition _augTransition,
@@ -78,7 +37,6 @@ public class AugObservation {
 		
 		augStates = set;
 		otherObsIds = new HashSet<Integer>(2); //expect not many other ids
-		//Stack<AugmentedState> stack = new Stack<AugmentedState>();
 		
 		HashMap<Integer, ArrayList<TempInfoNextStartingStates>> tempStore = new HashMap<Integer, ArrayList<TempInfoNextStartingStates>>(4); //4 is random number
 		if(observed == -1)
@@ -109,7 +67,6 @@ public class AugObservation {
 				
 				
 				ArrayList<AugmentedState> forNextStartingStates = new ArrayList<AugmentedState>(5); // 5 is randomly chosen
-				//HashMap<Action, HashMap<StateIDProb, AugmentedState>> mapSuccessors = new HashMap<Action, HashMap<StateIDProb, AugmentedState>>(4); // 4 is randomly chosen
 				
 				handlingEngingStates(entry, forNextStartingStates);
 				ArrayList<TempInfoNextStartingStates> mapSuccessors = entry.getValue();
@@ -126,7 +83,6 @@ public class AugObservation {
 		if(id == -1) id = tempId;	//if no id was suggested when finding all connected states, then use the new one
 		checkObservationIds();
 		//transition should be correct and augStates as well
-		//necesito connectedStates?? para despues? creo que no
 	}
 	
 	
@@ -143,7 +99,6 @@ public class AugObservation {
 	 * @return a merged map
 	 * @postcondition tempStore contains the merged map
 	 */
-	//private HashMap<Integer, ArrayList<TempInfoNextStartingStates>> mergeMaps(
 	private void mergeMaps(
 		HashMap<Integer, ArrayList<TempInfoNextStartingStates>> tempStore,
 		HashMap<Integer, ArrayList<TempInfoNextStartingStates>> newMap) {
@@ -163,7 +118,6 @@ public class AugObservation {
 				
 			}
 		}
-	//return tempStore;
 }
 
 
@@ -204,117 +158,6 @@ public class AugObservation {
 	 * @param observations 
 	 * @return set of all connected states or null if start was already explored
 	 */
-	//decidir en que estado estan los id de estado y de augmentedobservation al principio y al final
-	/*
-	 *no preocuparse de observationid solo de id de todos los estados visitados
-	 * idobservation del estado start deberia coincidir con id de esta observacion
-	 * el idobservacion de un estado cambia cuando se asigna id a la observacion o cuando un estado de esta observacion ya estaba en otra
-	 * en ambos casos cambiar observacionid a todod los estados en esta observacion
-	 * id de start deberia estar asignado
-	 * id de succesors queda asignado al final
-	 * idobservation de successors 
-	 */
-	/*private HashSet<AugmentedState> findAllConnectedStates(AugmentedState start, Transition originalTransition,
-			ArrayList<Integer> observations) {
-		HashSet<AugmentedState> connectedStates = new HashSet<AugmentedState>();	//to avoid duplicates in stack
-		Stack<AugmentedState> stack = new Stack<AugmentedState>();
-		if(augStates.indexOf(start) == -1) { //this should only happen with S0
-			augStates.add(start);
-		}
-		if(start.observationId == -1 && (augTransition.size() <= start.id || augTransition.getMap().get(start.id) == null)) { //if it was not explored before
-			stack.push(start); 
-			connectedStates.add(start); 
-		}else {
-			if(id == -1 || id == start.observationId) id = start.observationId;
-			else otherObsIds.add(start.observationId);
-			
-		}
-		
-		
-		HashMap<Integer, ArrayList<TempInfoNextStartingStates>> tempStore = null;
-		while(!stack.isEmpty()) {
-			AugmentedState As = stack.pop();
-			int s = As.prevId;
-			ArrayList<Action> actions = new ArrayList<Action>(originalTransition.getMap().get(s).size());
-			
-			for(Action a: originalTransition.getMap().get(s)) {
-				Action clonedAction = a.clone();
-				for(StateIDProb succ: a.getSuccessors()) {
-					AugmentedState temp;
-					if(observed == observations.get(succ.getState())) {
-						temp = new AugmentedState(-1, succ.getState(),goals);
-						int tempid = assignIDto(temp, stack, clonedAction, succ.getProb(), connectedStates);
-						if(id == -1 || id == tempid) id = tempid;
-						else otherObsIds.add(tempid);
-					}else { //have other observation, so they are the nextStarting
-						//temp = new AugmentedState(-1, succ.getState(),GRD.intersect(a.getGoals(), goals));
-						//assignIDto(temp, null, clonedAction, succ.getProb(), null);	//if some states already existed
-						//nextAStarting.computeIfAbsent(observations.get(succ.getState()), k -> new HashSet<AugmentedState>()).add(temp);
-						if(tempStore == null) {
-							tempStore = new HashMap<Integer, ArrayList<TempInfoNextStartingStates>> (4); // 4 is random guess
-							ArrayList<TempInfoNextStartingStates> setEndingStates = new ArrayList<TempInfoNextStartingStates>(4); // 4 is random guess
-							setEndingStates.add(new TempInfoNextStartingStates(As,clonedAction, succ));
-							tempStore.put(observations.get(succ.getState()), setEndingStates);
-						}else {
-							int obs = observations.get(succ.getState());
-							if(tempStore.get(obs) == null) {
-								ArrayList<TempInfoNextStartingStates> setEndingStates = new ArrayList<TempInfoNextStartingStates>(4); // 4 is random guess
-								setEndingStates.add(new TempInfoNextStartingStates(As,clonedAction, succ));
-								tempStore.put(obs, setEndingStates);
-							}else {
-								TempInfoNextStartingStates tempInfo = new TempInfoNextStartingStates(As,clonedAction, succ);
-								int index = tempStore.get(obs).indexOf(tempInfo);
-								if(index == -1) {
-									tempStore.get(obs).add(tempInfo);
-								}else {
-									tempStore.get(obs).get(index).addAction(a, succ);
-								}
-							}
-						}
-					}
-					
-					
-				}
-				actions.add(clonedAction);
-			}
-			augTransition.putIfAbsent(As.id, actions);	//actions should have incomplete successors here
-		}
-		if(tempStore != null) //in cases where the starting state was already explored
-		for(Entry<Integer, ArrayList<TempInfoNextStartingStates>> entry:tempStore.entrySet()) {
-			/*
-			 * for each observation group
-			 * for each ending state (TempInfoNextStartingStates)
-			 * for each action a
-			 * create a temp nextstarting node augmented with the intersection of goals add to a set for nextStarting
-			 * end for each action a
-			 * end for each ending state (TempInfoNextStartingStates)
-			 * union of goals for this group
-			 * set the goals for all states in nextStarting set
-			 * find ids for each state
-			 * for each action add successor (the transition should update automatically)
-			 */
-			
-			
-			/*ArrayList<AugmentedState> forNextStartingStates = new ArrayList<AugmentedState>(5); // 5 is randomly chosen
-			HashMap<Action, HashMap<StateIDProb, AugmentedState>> mapSuccessors = new HashMap<Action, HashMap<StateIDProb, AugmentedState>>(4); // 4 is randomly chosen
-			
-			handlingEngingStates(entry, forNextStartingStates, mapSuccessors);
-			
-			
-			boolean[] totalGoals = unionGoals(forNextStartingStates);
-			setTotalGoals(forNextStartingStates, totalGoals); //forNextStartingStates might change after this
-			HashSet<AugmentedState> setNextStartingStates = new HashSet<AugmentedState>(forNextStartingStates);
-			
-			assignIDToNextStartingStates(mapSuccessors);
-			
-			nextAStarting.computeIfAbsent(entry.getKey(), k-> new HashSet<AugmentedState>()).addAll(setNextStartingStates);
-		}
-		return connectedStates;
-		
-	}*/
-
-
-	
 	private HashMap<Integer, ArrayList<TempInfoNextStartingStates>> findAllConnectedStates(AugmentedState start, Transition originalTransition,
 			ArrayList<Integer> observations) {
 		HashMap<Integer, ArrayList<TempInfoNextStartingStates>> tempStore = new HashMap<Integer, ArrayList<TempInfoNextStartingStates>> ();
@@ -390,7 +233,6 @@ public class AugObservation {
 			augTransition.putIfAbsent(As.id, actions);	//actions should have incomplete successors here
 		}
 		return tempStore;
-//		return connectedStates;
 		
 	}
 	
@@ -418,13 +260,6 @@ public class AugObservation {
 	 * @param mapSuccessors
 	 * @postcondition successors of actions are updated and ids are assigned to all successors
 	 */
-/*	private void assignIDToNextStartingStates(HashMap<Action, HashMap<StateIDProb, AugmentedState>> mapSuccessors) {
-		for(Entry<Action, HashMap<StateIDProb, AugmentedState>> succ:mapSuccessors.entrySet()) {
-			for(Entry<StateIDProb, AugmentedState> stProbAug:succ.getValue().entrySet())
-				assignIDto(stProbAug.getValue(), null, succ.getKey(), stProbAug.getKey().getProb(), false);
-		}
-		
-	}*/
 	
 	private void assignIDToNextStartingStates(ArrayList<TempInfoNextStartingStates> mapSuccessors) {
 		for(TempInfoNextStartingStates temp:mapSuccessors) {
@@ -435,30 +270,7 @@ public class AugObservation {
 		}
 	}
 
-	/**
-	 * @param entry
-	 * @param forNextStartingStates
-	 * @param mapSuccessors
-	 * @postcondition mapSuccessors is filled with temporal augmented states without id and with 
-	 * goals resulting from intersection of predecessor's goals and action. forNextStartingStates is filled with all temp augmented states
-	 */
-	/*private void handlingEngingStates(Entry<Integer, ArrayList<TempInfoNextStartingStates>> entry,
-			ArrayList<AugmentedState> forNextStartingStates, 
-			HashMap<Action, HashMap<StateIDProb, AugmentedState>> mapSuccessors) {
-		for(TempInfoNextStartingStates info: entry.getValue()) {
-			for(Entry<Action, ArrayList<StateIDProb>> actSucc: info.getActions().entrySet()) {
-				Action a = actSucc.getKey();
-				for(StateIDProb succ: actSucc.getValue()) {
-					AugmentedState temp = new AugmentedState(-1, succ.getState(),GRD.intersect(a.getGoals(), goals));
-					int index = forNextStartingStates.indexOf(temp);
-					if(index == -1) forNextStartingStates.add(temp);
-					else temp = forNextStartingStates.get(index);
-					mapSuccessors.computeIfAbsent(a, k -> new HashMap<StateIDProb, AugmentedState>()).put(succ, temp);//can have same action same successor but from different predecessors
-				}
-			}
-		}
-		
-	}*/
+
 
 	/**
 	 * @param entry
@@ -476,7 +288,6 @@ public class AugObservation {
 					if(index == -1) forNextStartingStates.add(temp);
 					else temp = forNextStartingStates.get(index);
 					info.addToMapSuccessors(a, succ,temp);
-					//mapSuccessors.computeIfAbsent(a, k -> new HashMap<StateIDProb, AugmentedState>()).put(succ, temp);//can have same action same successor but from different predecessors
 				}
 			}
 		}
@@ -491,7 +302,6 @@ public class AugObservation {
 	 */
 	private void setTotalGoals(ArrayList<AugmentedState> forNextStartingStates,
 			boolean[] totalGoals) {
-		//ArrayList<AugmentedState> changing = new ArrayList<AugmentedState>(forNextStartingStates.size());
 		AugmentedState s;
 		for(int i = 0; i < forNextStartingStates.size(); i++) {
 			s = forNextStartingStates.get(i);
@@ -501,13 +311,11 @@ public class AugObservation {
 					if(s1 != null) {
 						s.id = s1.id;
 						s.goals = s1.goals;
-						//s = s1;	//check transition complicated if s or s1 are in transition
 					}
 					else s.goals[g] = totalGoals[g];
 				}
 			}
 		}
-		//return null;
 	}
 
 	/**
@@ -632,24 +440,6 @@ public class AugObservation {
 	 * @param second
 	 * @postcondition this observation gets all merged content
 	 */
-	/*public void merge(AugObservation second) {
-		for(AugmentedState s: second.connectedStates) {
-			if(!this.getConnectedStates().contains(s)) {
-				this.connectedStates.add(s);
-				s.observationId = id;
-			}
-		}
-		for(AugmentedState s:second.startingAStates) {	
-			if(this.startingAStates.add(s))
-				s.observationId = id;
-		}
-		for(Entry<Integer, HashSet<AugmentedState>> entry :second.getNextAStarting().entrySet()) {	//new nextStarting need to be expanded
-			int obs = entry.getKey();
-			this.nextAStarting.computeIfAbsent(obs, k-> new HashSet<AugmentedState>()).addAll(entry.getValue());
-			
-			
-		}
-	}*/
 	
 	public boolean merge(AugObservation second) {
 		boolean toStack = false;
@@ -673,8 +463,6 @@ public class AugObservation {
 				break;
 			}
 			if(!haveSameGoals(storedGoals, tempGoals)) {
-				//System.err.println("DifferentGoals");
-				//System.out.print(augTransition); 
 				toStack = true;
 				break;
 			}
@@ -697,7 +485,6 @@ public class AugObservation {
 			}
 		}
 		if(!toStack && second.id != -1 && second.id != id) {
-			//System.err.println("Changing observation ID from "+ second.id + " to " + id);
 			second.id = id;
 		}
 		return toStack;

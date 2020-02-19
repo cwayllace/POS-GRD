@@ -120,12 +120,6 @@ public class Action implements Cloneable{
 	 */
 	public void addSuccessors(ArrayList<StateIDProb> succ) {
 		successors = succ;
-		/*if(successors == null) successors = succ;
-		else {
-			for(StateIDProb sp: succ) {
-				this.addSuccessor(sp);
-			}
-		}*/
 	}
 	
 	public ArrayList<StateIDProb> getSuccessors(){

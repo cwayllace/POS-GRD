@@ -35,112 +35,7 @@ public class Design {
 	private int[] actionsRemoved, statesRemoved;
 	private String[] actionsRemovedNames;
 	
-	/**
-	 * @param modifications number of modifications
-	 * @param t transition
-	 * @param initCost cost at the initial state (per goal)
-	 * @param goals
-	 * @param convergedValues from the initial GR problem
-	 * @param flags
-	 * @param values
-	 * @throws Exception 
-	 */
-	/*public Design(int modifications, Transition t, ArrayList<Double> initCost, ArrayList<HashSet<Integer>> goals, ArrayList<double[]> convergedValues, double wcd, boolean[] flags, String[] values, ArrayList<Integer> observations) throws Exception {
-		k = modifications;
-		transition = t;
-		initialCostPerGoal = initCost;
-		this.goals = goals;
-		wcd0 = wcd;
-		minWCD = wcd0;
-		int n = getTotalNumberActions();
-		Transition transitionForDesign;
-		Transition legalActions;
-//		ArrayList<Double> newCost;
-		//remove 1 action to mark the ones that cause unreachable goals
-		ArrayList<Integer>markedActions = new ArrayList<Integer>();
-		HashSet<Integer>actionsReducedWCD = null;
-		for(int a = 0; a < n; a++) {
-			int[]data = {a};	
-			
-			transitionForDesign = removeAction(data);
-			if(transitionForDesign.getMap().get(0) == null) {
-				legalActions = null;
-				markedActions.add(0);
-			}
-			else legalActions = getNewCosts(transitionForDesign, convergedValues, data, markedActions, flags, values);
-			if(legalActions == null) continue;
-			//the new cost should be equal to the original cost at this point
-			//new cost y legalpolicies deberia ser lo mismo?
-			//Transition legalTransition = GRD.findLegalPolicies(transitionForDesign, goals, flags, values, false);
-			//0: domainName 1: instanceName 2: algName 3: kValue 4: timeOut 5: MBestPolicies
-			//0: Deterministic? 1: Partial Observability? 2: Sub-optimal? 3: AR 4: SR 5: SR Optimal? 6: Design Pruning? 7: verbose
-			
-			if(!flags[1]) {
-				findMinWCD(legalActions, goals.size(), data, 1, null,flags, values); //for FO
-			}else findMinWCD(legalActions, goals.size(), data, 1, observations,flags, values); //for PO
-			
-			
-		}
-		if(k > 1) {
-			
-			Combination c;
-			Integer[] newDataToCombine = null ;
-			int m = n - markedActions.size();
-			for(int i = k; i >= 2; i--) { 
-				if(i < k) {
-					
-					if(minWCD == wcd0) {
-						if(actionsReducedWCD == null)
-							System.err.println("Too many reductions");
-						else
-						break;
-					}
-					m = actionsReducedWCD.size();
-				}
-				c = new Combination(m,i); //do not take into account markedActions
-				int total = (int) Combination.Choose(m, i);
-				if (total <= 0) continue;
-				if(i == k) {
-					actionsReducedWCD = new HashSet<Integer>();
-					newDataToCombine = prunedActions(markedActions, n);
-				}
-				//else newDataToCombine = (Integer[]) actionsReducedWCD.toArray();
-				else {
-					
-					newDataToCombine = fromObectToIntArray(actionsReducedWCD.toArray());
-					Arrays.sort(newDataToCombine);
-					actionsReducedWCD = new HashSet<Integer>();
-				}
-				for(int combineActions = 0; combineActions < total; combineActions++) {
-					int[] data = new int[c.data.length];
-					for(int index = 0; index < c.data.length; index++) {
-						data[index] = newDataToCombine[c.data[index]];
-					}			
-					transitionForDesign = removeAction(data);
-					legalActions = getNewCosts(transitionForDesign, convergedValues, data, markedActions, flags, values);
-					if(legalActions != null) {
-						//solve
-						//Transition legalTransition = GRD.findLegalPolicies(transitionForDesign, goals, flags, values, false);
-						double tempWCD = minWCD;
-						HashSet<Integer> interestingActions;
-						if(!flags[1]) {
-							interestingActions = findMinWCD(legalActions, goals.size(), data, k, null, flags, values); //for FO
-						} else interestingActions = findMinWCD(legalActions, goals.size(), data, k, observations, flags, values); //for PO
-						if(minWCD == 0) break;
-						if(tempWCD > minWCD) {
-							actionsReducedWCD = new HashSet<Integer>();
-						}
-						actionsReducedWCD.addAll(interestingActions);
-					}
-					
-					c = c.Successor();
-				}
-				
-			}
-		} // k > 1
-		System.out.println(printAnswer(actionsRemoved));
-		
-	}*/
+
 	
 	public Design(int modifications, Transition t, ArrayList<Double> initCost, ArrayList<HashSet<Integer>> goals, 
 			ArrayList<double[]> convergedValues, double wcd, boolean[] flags, String[] values, 
@@ -201,7 +96,6 @@ public class Design {
 					else data[index] = newDataToCombine[c.data[index]];
 				}
 				
-				//System.out.println(count); count++;
 				if(i > 1 && k > 2) {
 					int prefixLength = isUseful(nonUsefulCombinations, data);
 					if(prefixLength != -1) {
@@ -218,14 +112,8 @@ public class Design {
 					}
 				}
 					
-				/*if(!isUseful(nonUsefulCombinations, data)) {//prune combinations and reduce total here
-					c = c.Successor();
-					continue;
-				}*/
-				
 
 				transitionForDesign = removeAction(data);
-				//System.out.println("trans for design "+transitionForDesign);
 				if(transitionForDesign.getMap().get(0) == null) {
 					legalActions = null;
 					if(i == 1) {
@@ -265,11 +153,7 @@ public class Design {
 					}
 				}
 				else {
-				/*	if(i == 1) {
-						if(markedActions.indexOf(data[0]) == -1)
-							markedActions.add(data[0]);
-					}
-					else */if(i < k && k > 1) nonUsefulCombinations.addNode(data);
+					if(i < k && k > 1) nonUsefulCombinations.addNode(data);
 				}
 				c = c.Successor();
 			}
@@ -345,7 +229,6 @@ public class Design {
 			for(arrayWithHash s:allUsefulStates) {
 				ArrayList<Integer> newObservations = copy(observations);
 				HashMap<Integer, ArrayList<Integer>> newObserved = refineStates(s.data, newObservations, observed);
-//				double tempWCD = minWCD;
 
 				findMinWCD(legalActions, goals.size(), removedActions, s.data, newObservations, newObserved, flags, values, toPrune, false); //for PO
 			
@@ -560,30 +443,6 @@ public class Design {
 	}
 	
 	
-	/*private void refineStates(int[] combination, ArrayList<Integer> newObservations, HashMap<Integer, ArrayList<Integer>> observed) {
-		int nextObs = newObservations.size();
-		int[] indexToRemove = new int[combination.length];
-		HashMap<Integer, ArrayList<Integer>> toAdd = new HashMap<Integer, ArrayList<Integer>>(combination.length);
-		
-		for(int i = 0; i < combination.length; i ++) {
-			ArrayList<Integer> obs = observed.get(combination[i]);
-			newObservations.set(combination[i], nextObs);
-			for(int s = 0; s < observed.size(); s++) {
-				
-				if(s==combination[i]) {
-					indexToRemove[i] = s;
-					ArrayList<Integer> temp = new ArrayList<Integer>(combination.length);
-					temp.add(combination[i]);
-					toAdd.put(nextObs, temp);
-				}
-			}
-			nextObs++;
-			observed.get(obs).remove(i);
-		}
-		observed.putAll(toAdd);
-		
-		
-	}*/
 
 
 	private ArrayList<Integer>copy(ArrayList<Integer> observations){
@@ -596,26 +455,6 @@ public class Design {
 	 * @param data
 	 * @return true if data is not in nonUsefulCombinations
 	 */
-	/*private boolean isUseful(Tree nonUsefulCombinations, int[] data) {
-		int[]prefix = {data[0], data[1]};
-		Node node, p = nonUsefulCombinations.root;
-		node = nonUsefulCombinations.lookFor(prefix, nonUsefulCombinations.root);
-		
-		if(node == null) return true;
-		if(node.isLeaf) return false;
-		if(data.length > 2) {	//check level by level, node should be non null here
-			p = node;
-			for(int i = 2; i < data.length; i ++) {
-				
-				prefix = nonUsefulCombinations.subArray(i, data);
-				node = nonUsefulCombinations.lookFor(prefix, p);
-				p = node;
-				if(node == null) return true;
-				if(node.isLeaf) return false;
-			}
-		}
-		return false;
-	}*/
 	
 	private int isUseful(Tree nonUsefulCombinations, int[] data) {
 		int[]prefix = {data[0], data[1]};
@@ -707,7 +546,6 @@ private void findMinWCD(Transition legalTransition, int numGoals,
 		int[] actionsTochooseForReduction, int[] sensorsTochooseForRefining, ArrayList<Integer> observations, 
 		HashMap<Integer, ArrayList<Integer>> observed, boolean[] flags, String[] values, ArrayList<Integer> toPrune, boolean isSRPruning) {
 	
-//	HashSet<Integer> actionsReducedWCD = new HashSet<Integer>();
 	if(!flags[2]) {//if agent is optimal
 		AugmentedState s0 = GRD.createAugS0(numGoals);
 		
@@ -721,7 +559,6 @@ private void findMinWCD(Transition legalTransition, int numGoals,
 		GR gr = new GR(augTransition);
 
 		double newWCD = gr.computeWCD(flags, values, gr.getAbsorvingStates(), false);
-//		System.out.println("wcd: " + newWCD);
 		if(newWCD >999) System.err.println("###############################BADDD####################");
 		if(newWCD < minWCD  && isSRPruning) {//here store all actions 
 			minWCD = newWCD;
@@ -732,46 +569,8 @@ private void findMinWCD(Transition legalTransition, int numGoals,
 			minWCD = newWCD;
 			if(flags[7]) System.out.println("WCD reduction "+minWCD);
 		}
-		/*if(newWCD <= minWCD  && !isSRPruning && actionsTochooseForReduction == null) {//if it is only SR
-			if(statesRemoved!= null && statesRemoved.length > sensorsTochooseForRefining.length)
-				statesRemoved = sensorsTochooseForRefining;
-			if(newWCD < minWCD) {
-				statesRemoved = sensorsTochooseForRefining;
-				minWCD = newWCD;
-			}
-			
-		}if(newWCD <= minWCD  && sensorsTochooseForRefining == null) {// only AR here store all actions 
-			if(actionsRemoved!= null && actionsRemoved.length > actionsTochooseForReduction.length)
-				actionsRemoved = actionsTochooseForReduction;
-			if(newWCD < minWCD) {
-				actionsRemoved = actionsTochooseForReduction;
-				minWCD = newWCD;
-//				if(k > 1) //store all actions that cause wcd reduction
-//				actionsReducedWCD = new HashSet<Integer>();	//every time the wcd is reduced start a new list
-			}
-//			if(k > 1)
-//			for(int a:actionsTochooseForReduction)
-//				actionsReducedWCD.add(a);
-			
-		}if(newWCD <= minWCD  && !isSRPruning  && actionsTochooseForReduction != null && sensorsTochooseForRefining != null) {// SR and AR
-			if(actionsRemoved!= null && actionsRemoved.length > actionsTochooseForReduction.length)
-				actionsRemoved = actionsTochooseForReduction;
-			if(statesRemoved!= null && statesRemoved.length > sensorsTochooseForRefining.length)
-				statesRemoved = sensorsTochooseForRefining;
-			if(newWCD < minWCD) {
-				actionsRemoved = actionsTochooseForReduction;
-				statesRemoved = sensorsTochooseForRefining;
-				minWCD = newWCD;
-//				if(k > 1) //store all actions that cause wcd reduction
-//				actionsReducedWCD = new HashSet<Integer>();	//every time the wcd is reduced start a new list
-			}
-//			if(k > 1)
-//			for(int a:actionsTochooseForReduction)
-//				actionsReducedWCD.add(a);
-			
-		}*/
+		
 	}
-//		return actionsReducedWCD;
 	}
 
 
@@ -785,37 +584,6 @@ private void findMinWCD(Transition legalTransition, int numGoals,
  * @param values
  * @return Cost per goal if all goals are reachable or null otherwise
  */
-/*private ArrayList<Double> getNewCosts(Transition transitionForDesign, ArrayList<double[]> convergedValues, int[] actions, ArrayList<Integer> markedActions, boolean[] flags,
-			String[] values) {
-	//0: domainName 1: instanceName 2: algName 3: kValue 4: timeOut 5: MBestPolicies
-	//0: Deterministic? 1: Partial Observability? 2: Sub-optimal? 3: AR 4: SR 5: SR Optimal? 6: Design Pruning? 7: verbose
-	boolean isReachable = false;
-	ArrayList<Double> newCost  = new ArrayList<Double>(goals.size());
-	SolutionMDP solution = null;
-	for(int g = 0; g < goals.size(); g++) {
-		//double cost = computeNewCostToGoal(g, transitionForDesign, convergedValues.get(g), flags, values);
-		solution = GRD.solveMDPForGoal(g, goals.get(g), transition, convergedValues.get(g), values[2], flags[2], values[5], flags[7]);
-		double cost = solution.getCostAtS0();
-		if(cost < 1000) { //assume 1000 or bigger means we not reach goal g
-			isReachable = true;
-			if(initialCostPerGoal.get(g) < cost) break;	//this should not happen, cost should be either > 1000 or equal
-			
-			////
-			Transition tempTransition = solution.getTransition();
-			GRD.removeNonReachableStates(tempTransition);
-			transitionForDesign = GRD.mergeTransitions(transitionForDesign, tempTransition, g, goals.size(), flags[1]);
-			/////
-			newCost.add(g,cost);
-		}else {
-			isReachable = false;
-			if(actions.length == 1)
-				markedActions.add(actions[0]); //store action that cause non-reachable goals so that it is not taken into account in later combinations
-			break;
-		}
-	}
-	if(isReachable) return newCost;
-		return null;
-	}*/
 
 private Transition getNewCosts(Transition transitionForDesign, ArrayList<double[]> convergedValues, int[] actions, ArrayList<Integer> markedActions, boolean[] flags,
 		String[] values) {
@@ -854,38 +622,6 @@ if(isReachable) return currentTransition;
 	return null;
 }
 
-/**
- * @param actions
- * @param markedActions
- * @return true if none of the actions causes unreachable goals (is not in markedActions)
- */
-/*private boolean canRemove(int[] actions, HashSet<Integer> markedActions) {
-		for(int i = 0; i < actions.length; i++) {
-			if(markedActions.contains(actions[i])) {
-				return false;
-			}
-		}
-		return true;
-	}*/
-
-
-
-
-
-/**
- * @param g
- * @param transitionForDesign
- * @param convValues 
- * @param flags
- * @param values
- * @return cost at S0 after solving VI
- */
-/*private double computeNewCostToGoal(int g, Transition transitionForDesign, double[] convValues, boolean[] flags, String[] values ) {
-	//0: domainName 1: instanceName 2: algName 3: kValue 4: timeOut 5: MBestPolicies
-	//0: Deterministic? 1: Partial Observability? 2: Sub-optimal? 3: AR 4: SR 5: SR Optimal? 6: Design Pruning? 7: verbose
-		VI vi = new VI(transitionForDesign, goals.get(g), flags[7], true, convValues);
-		return vi.getExpectedCostAtS0();
-	}*/
 
 
 
@@ -902,17 +638,6 @@ if(isReachable) return currentTransition;
 		return numberActions;
 	}
 
-	/*private HashMap<Integer,ArrayList<Action>> getStateActionsWithoutNull(){
-		HashMap<Integer,ArrayList<Action>> result = new HashMap<Integer,ArrayList<Action>>();
-		int state = 0;
-		for(ArrayList<Action> entry:transition.getMap()) {
-			if( entry != null) result.put(state, entry);
-			state ++;
-		}
-		return result;
-	}*/
-
-	
 
 
 	/**
@@ -945,11 +670,9 @@ if(isReachable) return currentTransition;
 				}else {
 				ArrayList<Action> temp = new ArrayList<Action>();
 				count -= entry.size();
-			//	System.out.print("Action to remove ");
 				for(Action act:entry) {
 					if(a.length > lookingFor && count == a[lookingFor]) {
 						lookingFor++;
-						//System.out.print(act.toString() + " ");
 					}
 					else{
 						Action tempAction = act.clone();
@@ -971,7 +694,6 @@ if(isReachable) return currentTransition;
 				state++;
 			}		
 		}
-	//	System.out.print("\n");
 		return resulting;
 	}
 	

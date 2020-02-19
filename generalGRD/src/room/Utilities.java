@@ -13,7 +13,6 @@ import optimizedRunGRD.Predicate;
 import optimizedRunGRD.State;
 import optimizedRunGRD.StateProb;
 
-//Added getActions method for suboptimal agents to compute bestKPolicies
 public class Utilities {
 	
 	static HashMap<String, ArrayList<StateProb>> nextStateMap; //only for room
@@ -67,7 +66,6 @@ public class Utilities {
 				   ArrayList<String> goal = new ArrayList<String>();
 				   goal.add(line);
 				   result.add(goal);
-				 // System.out.println(line);
 			   }
 	
 	
@@ -79,7 +77,6 @@ public class Utilities {
 		  catch(IOException e) {
 			  System.out.println(e);
 		  }	
-		//System.out.println(result);
 
 		return result; //read goals from the hyps.dat file
 	}
@@ -89,7 +86,7 @@ public class Utilities {
 	 * @param predicates
 	 * @return
 	 */
-	public static int isGoal(ArrayList<Predicate> predicates, String domainName, String instanceName){  //done
+	public static int isGoal(ArrayList<Predicate> predicates, String domainName, String instanceName){ 
 	//test if the state is a goal and the goal number
 		ArrayList<ArrayList<String>>listGoals = readGoals(domainName, instanceName);
 		int goalNumber=0;
@@ -99,7 +96,6 @@ public class Utilities {
 					return goalNumber;
 				goalNumber++;
 			}
-		//System.out.println(goalNumber);
 		return -1;
 	}
 
@@ -181,7 +177,6 @@ public class Utilities {
 		  catch(IOException e) {
 			  System.out.println(e);
 		  }
-		 // System.out.println(actions);
 		  System.out.println((System.nanoTime() - strt));
 		  return actions;
 		 }
@@ -243,35 +238,7 @@ public class Utilities {
 	}
 	
 	
-	/*public static int[] getIdOf(String state, String observation, ArrayList<State> allStates) {
-		int[] stateObs = new int[2];
-		int count = 0; //if 2 return, counts the findings of state and obs ids
-		boolean sFlag = false, oFlag = false;
-		String wordState[] = state.split("\\s");
-		String wordObs[] = observation.split("\\s");
-		for(State s:allStates)
-		{	ArrayList<String> paramState = new ArrayList<String>(2);
-			ArrayList<String> paramObs = new ArrayList<String>(2);
-			
-			paramState.add(wordState[1]);
-			paramState.add(wordState[2]);
-			paramObs.add(wordObs[1]);
-			paramObs.add(wordObs[2]);
-			if(!sFlag && s.predicates.contains(new Predicate(wordState[0],paramState))) {
-				stateObs[0] = s.id;
-				sFlag = true;
-				count++;
-				if(count == 2) return stateObs;
-			}
-			if(!oFlag && s.predicates.contains(new Predicate(wordObs[0],paramState))) {
-				stateObs[1] = s.id;
-				oFlag = true;
-				count++;
-				if(count == 2) return stateObs;
-			}
-		}
-		return null;
-	}*/
+	
 	
 	public static void getIds(ArrayList<Integer> observations, Map<String, String> obs, ArrayList<State> allStates) {
 		for(String state:obs.keySet()) {
@@ -306,13 +273,7 @@ public class Utilities {
 		
 	}
 	
-	public static void main(String[] args) {
-		// ArrayList<String> predicates = readInitState();
-		
-		//readNextState();
-		//readInitState();
-		
-	}
+	
 
 	
 

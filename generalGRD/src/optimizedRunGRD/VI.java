@@ -98,7 +98,6 @@ public class VI{
 	}
 	
 	private void copyStates() {
-		//for(int i: transition.getMap().keySet())
 		for(int i = 0; i < transition.size(); i++)
 			currentValues[i] = nextValues[i];
 		
@@ -118,10 +117,9 @@ public class VI{
 	 */
 	private boolean isEqual() {
 		if(nextValues[0] > 1000) return true;
-		//for(int i: transition.getMap().keySet())
 		for(int i = 0;  i < transition.size(); i ++)
 		{
-			if(nextValues[i] > 1000) //added for stochastic domains version
+			if(nextValues[i] > 1000)
 				continue;
 			if(!(Math.floor(nextValues[i]*100000000000000000.0) == Math.floor(currentValues[i]*100000000000000000.0)))
 				return false;
@@ -158,9 +156,6 @@ public class VI{
 			
 			if((isMin && value > result) ||(!isMin && value < result))
 				value = result;
-			/*if(isMin && converged && (currentValues[state] == result || result >= 1000)) {//if there are loops currentValues[state] != result)
-				legalTransition.putIfAbsent(state, actionStateProb);	//so legalTransition does not put those states
-			}*/
 			////
 			if(isMin && converged && (currentValues[state] == result && result < 1000)) {
 				legalTransition.putIfAbsent(state, actionStateProb);
@@ -191,9 +186,7 @@ public class VI{
 	 * @return
 	 */
 	private double cost(int fromState, int toState, boolean isMin) {
-		//TODO change it for PO
 		if(isGoal(fromState)) return 0.0;
-		//if(!isMin && isGoal(toState)) return 0.0;
 		return 1.0;
 	}
 	
