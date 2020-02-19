@@ -1,0 +1,7 @@
+(is-red block1, holding block1)
+(on-top-of block1 block0, holding block1)
+(on-top-of block0 block1, holding block1)
+(on-top-of block2 block1, holding block1)
+(on-top-of block1 block2, holding block1)
+(on-top-of block1 table, holding block1)
+(on-top-of table block1, holding block1)

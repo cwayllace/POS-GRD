@@ -1,0 +1,28 @@
+(define (problem bw-c-pc-8)
+ (:domain bw-c-pc-8)
+ (:objects block0 block1 block2 block3 block4 block5 block6 block7 - block)
+ (:init
+  (on-top-of block0 block1)
+  (on-top-of block1 table)
+  (on-top-of block2 table)
+  (on-top-of block3 block4)
+  (on-top-of block4 block5)
+  (on-top-of block5 table)
+  (on-top-of block6 table)
+  (on-top-of block7 table)
+  (is-red block0)
+  (is-red block1)
+  (is-green block2)
+  (is-red block3)
+  (is-green block4)
+  (is-red block5)
+  (is-green block6)
+  (is-blue block7)
+ )
+(:goal
+(and
+<HYPOTHESIS>
+)
+)
+)
+)

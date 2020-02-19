@@ -1,0 +1,5 @@
+(truck-at-city truck0 city0,truck-at-city truck0 city0)
+(truck-at-city truck0 city1,truck-at-city truck0 city0)
+(truck-at-city truck0 city3,truck-at-city truck0 city0)
+(plane-at-city plane0 city0,plane-at-city plane0 city0)
+(plane-at-city plane0 city3,plane-at-city plane0 city0)
