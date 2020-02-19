@@ -1,3 +1,5 @@
+Partially Observable Stochastic Goal Recognition Design
+
 Utilities.java files need to change path from "src/" to the new path when not using eclipse.
 
 Example of arguments to run without eclipse:
