@@ -1,4 +1,5 @@
 Partially Observable Stochastic Goal Recognition Design
+Software developed for the paper "Accounting for Observer’s Partial Observability in Stochastic Goal Recognition Design: Messing with the Marauder’s Map"
 
 Utilities.java files need to change path from "src/" to the new path when not using eclipse.
 
